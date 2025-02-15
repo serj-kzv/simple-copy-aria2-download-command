@@ -9,7 +9,9 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": [
+        "<all_urls>"
+      ],
       "js": [
         "constants/miscConstants.js",
         "content.js"
@@ -29,5 +31,12 @@
     "webRequestBlocking",
     "<all_urls>",
     "clipboardWrite"
-  ]
+  ],
+  "icons": {
+    "16": "icon.svg",
+    "32": "icon.svg",
+    "48": "icon.svg",
+    "64": "icon.svg",
+    "96": "icon.svg"
+  }
 }

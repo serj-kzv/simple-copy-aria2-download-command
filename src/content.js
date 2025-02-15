@@ -1,7 +1,7 @@
 // Content script: listens for messages from background and triggers the trial request via an img tag.
 // Also receives the generated aria2 command and copies it to the clipboard.
 (() => {
-    const { TRIAL_REQUEST_PARAM, MESSAGE_ACTIONS } = window.MISC_CONSTANTS;
+    const {TRIAL_REQUEST_PARAM, MESSAGE_ACTIONS} = window.MISC_CONSTANTS;
 
     // Listen for messages from the background script.
     chrome.runtime.onMessage.addListener((message, sender) => {
@@ -38,7 +38,7 @@
             message.command
         ) {
             // Upon receiving the command, copy it to clipboard.
-            const { command } = message;
+            const {command} = message;
             // Use Clipboard API if available.
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(command)

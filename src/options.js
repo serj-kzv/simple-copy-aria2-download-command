@@ -1,7 +1,7 @@
 (() => {
     // Define storage keys and default aria2 options.
-    const STORAGE_KEYS = { ARIA2_OPTIONS: "aria2Options" };
-    const DEFAULT_ARIA2_OPTIONS = { s: 4, x: 4, k: "1M", maxTries: 0, retryWait: 0 };
+    const STORAGE_KEYS = {ARIA2_OPTIONS: "aria2Options"};
+    const DEFAULT_ARIA2_OPTIONS = {s: 4, x: 4, k: "1M", maxTries: 0, retryWait: 0};
 
     // Promisified storage get.
     const getOptions = () =>
@@ -14,7 +14,7 @@
     // Promisified storage set.
     const saveOptions = (options) =>
         new Promise((resolve) => {
-            chrome.storage.sync.set({ [STORAGE_KEYS.ARIA2_OPTIONS]: options }, () =>
+            chrome.storage.sync.set({[STORAGE_KEYS.ARIA2_OPTIONS]: options}, () =>
                 resolve()
             );
         });
