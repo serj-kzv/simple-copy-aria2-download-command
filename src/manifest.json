@@ -28,10 +28,10 @@
   ],
   "default_locale": "en",
   "icons": {
-    "16": "icon.png",
-    "32": "icon.png",
-    "48": "icon.png",
-    "64": "icon.png",
-    "96": "icon.png"
+    "16": "icon.svg",
+    "32": "icon.svg",
+    "48": "icon.svg",
+    "64": "icon.svg",
+    "96": "icon.svg"
   }
 }
