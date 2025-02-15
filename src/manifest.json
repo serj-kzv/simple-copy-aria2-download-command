@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "simple-copy-aria2-download-url",
-  "version": "2.0",
+  "version": "2.6",
   "author": "serj-kzv",
   "description": "Copies aria2 download command with headers to clipboard",
   "permissions": [
