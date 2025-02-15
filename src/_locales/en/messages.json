@@ -1,6 +1,10 @@
 {
   "contextMenuTitle": {
-    "message": "Copy aria2 command",
-    "description": "Context menu title for copying aria2 download command"
+    "message": "Copy aria2 download command",
+    "description": "Context menu item title"
+  },
+  "commandCopied": {
+    "message": "aria2 command copied to clipboard!",
+    "description": "Notification when command is copied."
   }
 }

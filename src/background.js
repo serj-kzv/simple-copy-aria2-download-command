@@ -1,89 +1,106 @@
-// background.js – Background script running as a module.
-// This script creates a context menu, generates a unique UID for each copy operation,
-// intercepts the test GET request using the UID as a unique marker,
-// compares the originalUrl and tabId to ensure uniqueness,
-// and builds an aria2 command using captured request headers.
-// ES2024, arrow functions, and async/await are used following the Airbnb style.
+// Import background constants (ES module style)
+import {
+    CONTEXT_MENU_IDS,
+    TRIAL_REQUEST_PARAM,
+    MESSAGE_ACTIONS,
+    DEFAULT_ARIA2_OPTIONS
+} from "./constants/bgMiscConstants.js";
+import { STORAGE_KEYS } from "./constants/bgStorageKeys.js";
 
-const TEST_PARAM = 'aria2test';
-const CONTEXT_MENU_ID = 'simple-copy-aria2-download-url';
+// Global variable to hold current aria2 options (loaded from storage)
+let currentAria2Options = { ...DEFAULT_ARIA2_OPTIONS };
 
-// Map to hold pending requests. Key: UID, Value: { tabId, originalUrl }.
+// Map to track pending trial requests: uid -> { tabId, linkUrl, tabUrl }
 const pendingRequests = new Map();
 
-// Helper to build the aria2 command.
-const buildAria2Command = (originalUrl, requestHeaders) => {
-    // Map each header into a --header option.
-    const headersPart = requestHeaders
-        .map(({name, value}) => `--header="${name}: ${value}"`)
-        .join(' ');
-    // Construct the aria2 command with minimal options:
-    // -c for resume support, -s4 for 4 splits, -x4 for 4 connections per server.
-    return `aria2 -c -s4 -x4 -k 1M --max-tries=0 --retry-wait=0 ${headersPart} "${originalUrl}"`;
-};
+// Helper: generate unique id using timestamp and random part
+const generateUID = () =>
+    `uid-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
-// Create a context menu item for links using i18n for the title.
-browser.contextMenus.create({
-    id: CONTEXT_MENU_ID,
-    title: browser.i18n.getMessage('contextMenuTitle'),
-    contexts: ['link']
+// Create context menu item for links
+chrome.contextMenus.create({
+    id: CONTEXT_MENU_IDS.COPY_ARIA2,
+    title: chrome.i18n.getMessage("contextMenuTitle"),
+    contexts: ["link"]
 });
 
-// When the context menu item is clicked, generate a UID and send a message to the content script.
-browser.contextMenus.onClicked.addListener(async (info, tab) => {
-    if (info.menuItemId === CONTEXT_MENU_ID && info.linkUrl && tab?.id != null) {
-        try {
-            const uid = crypto.randomUUID();
-            // Save the UID along with the tabId and original URL.
-            pendingRequests.set(uid, {tabId: tab.id, originalUrl: info.linkUrl});
-            // Send message with the URL and UID to the content script.
-            await browser.tabs.sendMessage(tab.id, {type: 'performTestRequest', url: info.linkUrl, uid});
-        } catch (err) {
-            console.error('Error sending message to content script:', err);
-        }
+// Listener for context menu clicks
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+    if (
+        info.menuItemId === CONTEXT_MENU_IDS.COPY_ARIA2 &&
+        info.linkUrl &&
+        tab?.id != null
+    ) {
+        const uid = generateUID();
+        pendingRequests.set(uid, {
+            tabId: tab.id,
+            linkUrl: info.linkUrl,
+            tabUrl: tab.url
+        });
+        // Send message to the content script in the current tab to perform trial request via an img tag.
+        chrome.tabs.sendMessage(tab.id, {
+            action: MESSAGE_ACTIONS.INITIATE_TRIAL,
+            uid,
+            linkUrl: info.linkUrl
+        });
     }
 });
 
-// Intercept outgoing requests and capture headers for our test GET request.
-browser.webRequest.onBeforeSendHeaders.addListener(
+// Load stored aria2 options from sync storage
+chrome.storage.sync.get(STORAGE_KEYS.ARIA2_OPTIONS, (result) => {
+    currentAria2Options = result[STORAGE_KEYS.ARIA2_OPTIONS]
+        ? { ...result[STORAGE_KEYS.ARIA2_OPTIONS] }
+        : { ...DEFAULT_ARIA2_OPTIONS };
+});
+
+// Update options if they change
+chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === "sync" && changes[STORAGE_KEYS.ARIA2_OPTIONS]) {
+        currentAria2Options = { ...changes[STORAGE_KEYS.ARIA2_OPTIONS].newValue };
+    }
+});
+
+// Intercept the trial request via webRequest API.
+// This listener targets image requests (created in the content script).
+chrome.webRequest.onBeforeSendHeaders.addListener(
     (details) => {
         try {
             const urlObj = new URL(details.url);
-            // Retrieve the UID from the test parameter.
-            const uid = urlObj.searchParams.get(TEST_PARAM);
-            if (!uid || !pendingRequests.has(uid)) return {};
+            if (!urlObj.searchParams.has(TRIAL_REQUEST_PARAM)) return;
+            const uid = urlObj.searchParams.get(TRIAL_REQUEST_PARAM);
+            if (!pendingRequests.has(uid)) return;
             const pending = pendingRequests.get(uid);
-            // Remove the UID parameter to obtain the actual URL.
-            urlObj.searchParams.delete(TEST_PARAM);
-            const requestUrl = urlObj.toString();
-            // Compare the stored originalUrl with the URL from the intercepted request.
-            if (pending.originalUrl !== requestUrl) {
-                console.warn(`Original URL mismatch: expected ${pending.originalUrl} but got ${requestUrl}`);
-                return {};
-            }
-            // Check that the tabId matches.
-            if (pending.tabId !== details.tabId) {
-                console.warn(`Tab ID mismatch: expected ${pending.tabId} but got ${details.tabId}`);
-                return {};
-            }
-            // Build the aria2 command using the captured request headers.
-            const command = buildAria2Command(pending.originalUrl, details.requestHeaders || []);
-            // Send the generated command to the originating tab.
-            if (details.tabId >= 0) {
-                browser.tabs.sendMessage(details.tabId, {type: 'copyCommand', command, uid})
-                    .catch((err) => console.error('Error sending copyCommand message:', err));
-            } else {
-                console.warn('No tabId associated with the request.');
-            }
-            // Remove the pending request entry.
+            // Verify that the request comes from the expected tab.
+            if (details.tabId !== pending.tabId) return;
+            // Retrieve all request headers.
+            const { requestHeaders } = details;
+            // Remove the trial parameter from the URL.
+            urlObj.searchParams.delete(TRIAL_REQUEST_PARAM);
+            const originalUrl = urlObj.toString();
+            // Build header parts: each header as --header="Name: Value"
+            const headerParts = requestHeaders
+                .map(({ name, value }) => `--header="${name}: ${value}"`)
+                .join(" ");
+            // Build options part using current stored settings.
+            const { s, x, k, maxTries, retryWait } = currentAria2Options;
+            const optionsPart = `-c -s${s} -x${x} -k ${k} --max-tries=${maxTries} --retry-wait=${retryWait}`;
+            // Form the complete aria2 command in one line.
+            const command = `aria2 ${headerParts} ${optionsPart} "${originalUrl}"`;
+            // Send the generated command back to the originating tab.
+            chrome.tabs.sendMessage(pending.tabId, {
+                action: MESSAGE_ACTIONS.TRIAL_RESPONSE,
+                uid,
+                command,
+                linkUrl: pending.linkUrl
+            });
+            // Remove the processed request.
             pendingRequests.delete(uid);
-            // Cancel the test request so it never reaches the network.
-            return {cancel: true};
         } catch (error) {
-            console.error('Error in onBeforeSendHeaders listener:', error);
-            return {};
+            console.error("Error in onBeforeSendHeaders:", error);
         }
+        // Cancel the trial request so that it is never sent to the network.
+        return { cancel: true };
     },
-    {urls: ['<all_urls>']},
-    ['blocking', 'requestHeaders']
+    { urls: ["<all_urls>"], types: ["image"] },
+    ["blocking", "requestHeaders"]
 );

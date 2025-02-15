@@ -1,37 +1,33 @@
 {
   "manifest_version": 2,
   "name": "simple-copy-aria2-download-url",
-  "version": "2.6",
+  "version": "3.0",
   "author": "serj-kzv",
-  "description": "Copies aria2 download command with headers to clipboard",
-  "permissions": [
-    "contextMenus",
-    "webRequest",
-    "webRequestBlocking",
-    "<all_urls>",
-    "activeTab",
-    "clipboardWrite"
-  ],
+  "description": "Copy aria2 download command to clipboard with custom options and headers.",
   "background": {
     "page": "background.html"
   },
   "content_scripts": [
     {
-      "matches": [
-        "<all_urls>"
-      ],
+      "matches": ["<all_urls>"],
       "js": [
+        "constants/miscConstants.js",
         "content.js"
       ],
       "run_at": "document_start"
     }
   ],
+  "options_ui": {
+    "page": "options.html",
+    "browser_style": true
+  },
   "default_locale": "en",
-  "icons": {
-    "16": "icon.svg",
-    "32": "icon.svg",
-    "48": "icon.svg",
-    "64": "icon.svg",
-    "96": "icon.svg"
-  }
+  "permissions": [
+    "contextMenus",
+    "storage",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>",
+    "clipboardWrite"
+  ]
 }
