@@ -6,6 +6,7 @@
 // ES2024, arrow functions, and async/await are used following the Airbnb style.
 
 const TEST_PARAM = 'aria2test';
+const CONTEXT_MENU_ID = 'copy-aria2-command';
 
 // Map to hold pending requests. Key: UID, Value: { tabId, originalUrl }.
 const pendingRequests = new Map();
@@ -23,14 +24,14 @@ const buildAria2Command = (originalUrl, requestHeaders) => {
 
 // Create a context menu item for links using i18n for the title.
 browser.contextMenus.create({
-    id: 'simple-copy-aria2-download-url',
+    id: CONTEXT_MENU_ID,
     title: browser.i18n.getMessage('contextMenuTitle'),
     contexts: ['link']
 });
 
 // When the context menu item is clicked, generate a UID and send a message to the content script.
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
-    if (info.menuItemId === 'copy-aria2-command' && info.linkUrl && tab?.id != null) {
+    if (info.menuItemId === CONTEXT_MENU_ID && info.linkUrl && tab?.id != null) {
         try {
             const uid = crypto.randomUUID();
             // Save the UID along with the tabId and original URL.
