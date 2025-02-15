@@ -19,7 +19,7 @@ const buildAria2Command = (originalUrl, requestHeaders) => {
         .join(' ');
     // Construct the aria2 command with minimal options:
     // -c for resume support, -s4 for 4 splits, -x4 for 4 connections per server.
-    return `aria2 -c -s4 -x4 ${headersPart} "${originalUrl}"`;
+    return `aria2 -c -s4 -x4 -k 1M --max-tries=0 --retry-wait=0 ${headersPart} "${originalUrl}"`;
 };
 
 // Create a context menu item for links using i18n for the title.
