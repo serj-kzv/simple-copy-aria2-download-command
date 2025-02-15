@@ -1,0 +1,6 @@
+{
+  "contextMenuTitle": {
+    "message": "Copy aria2 command",
+    "description": "Context menu title for copying aria2 download command"
+  }
+}

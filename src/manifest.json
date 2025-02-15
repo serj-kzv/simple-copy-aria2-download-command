@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+  "name": "simple-copy-aria2-download-url",
+  "version": "1.0",
+  "author": "serj-kzv",
+  "description": "Copies aria2 download command with headers to clipboard",
+  "permissions": [
+    "contextMenus",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>",
+    "activeTab",
+    "clipboardWrite"
+  ],
+  "background": {
+    "page": "background.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "default_locale": "en"
+}
