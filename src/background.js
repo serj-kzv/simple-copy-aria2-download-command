@@ -14,7 +14,7 @@ const pendingRequests = new Map();
 const buildAria2Command = (originalUrl, requestHeaders) => {
     // Map each header into a --header option.
     const headersPart = requestHeaders
-        .map(({ name, value }) => `--header="${name}: ${value}"`)
+        .map(({name, value}) => `--header="${name}: ${value}"`)
         .join(' ');
     // Construct the aria2 command with minimal options:
     // -c for resume support, -s4 for 4 splits, -x4 for 4 connections per server.
@@ -23,7 +23,7 @@ const buildAria2Command = (originalUrl, requestHeaders) => {
 
 // Create a context menu item for links using i18n for the title.
 browser.contextMenus.create({
-    id: 'copy-aria2-command',
+    id: 'simple-copy-aria2-download-url',
     title: browser.i18n.getMessage('contextMenuTitle'),
     contexts: ['link']
 });
@@ -34,9 +34,9 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
         try {
             const uid = crypto.randomUUID();
             // Save the UID along with the tabId and original URL.
-            pendingRequests.set(uid, { tabId: tab.id, originalUrl: info.linkUrl });
+            pendingRequests.set(uid, {tabId: tab.id, originalUrl: info.linkUrl});
             // Send message with the URL and UID to the content script.
-            await browser.tabs.sendMessage(tab.id, { type: 'performTestRequest', url: info.linkUrl, uid });
+            await browser.tabs.sendMessage(tab.id, {type: 'performTestRequest', url: info.linkUrl, uid});
         } catch (err) {
             console.error('Error sending message to content script:', err);
         }
@@ -69,7 +69,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(
             const command = buildAria2Command(pending.originalUrl, details.requestHeaders || []);
             // Send the generated command to the originating tab.
             if (details.tabId >= 0) {
-                browser.tabs.sendMessage(details.tabId, { type: 'copyCommand', command, uid })
+                browser.tabs.sendMessage(details.tabId, {type: 'copyCommand', command, uid})
                     .catch((err) => console.error('Error sending copyCommand message:', err));
             } else {
                 console.warn('No tabId associated with the request.');
@@ -77,12 +77,12 @@ browser.webRequest.onBeforeSendHeaders.addListener(
             // Remove the pending request entry.
             pendingRequests.delete(uid);
             // Cancel the test request so it never reaches the network.
-            return { cancel: true };
+            return {cancel: true};
         } catch (error) {
             console.error('Error in onBeforeSendHeaders listener:', error);
             return {};
         }
     },
-    { urls: ['<all_urls>'] },
+    {urls: ['<all_urls>']},
     ['blocking', 'requestHeaders']
 );
