@@ -14,7 +14,7 @@ browser.runtime.onMessage.addListener(async (message) => {
         img.src = urlObj.toString();
         // Optionally, handle error events to suppress console error messages.
         img.onerror = () => {
-            console.warn('Test GET request image error (expected due to cancellation).');
+            // console.warn('Test GET request image error (expected due to cancellation).');
         };
     } else if (message.type === 'copyCommand' && message.command) {
         try {

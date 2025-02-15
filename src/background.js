@@ -6,7 +6,7 @@
 // ES2024, arrow functions, and async/await are used following the Airbnb style.
 
 const TEST_PARAM = 'aria2test';
-const CONTEXT_MENU_ID = 'copy-aria2-command';
+const CONTEXT_MENU_ID = 'simple-copy-aria2-download-url';
 
 // Map to hold pending requests. Key: UID, Value: { tabId, originalUrl }.
 const pendingRequests = new Map();
