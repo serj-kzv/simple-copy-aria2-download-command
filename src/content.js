@@ -20,7 +20,6 @@ browser.runtime.onMessage.addListener(async (message) => {
         try {
             // Copy the aria2 command to the clipboard using the Clipboard API.
             await navigator.clipboard.writeText(message.command);
-            console.log('Aria2 command copied to clipboard:', message.command);
         } catch (err) {
             console.error('Error copying command to clipboard:', err);
         }
