@@ -1,0 +1,40 @@
+/* option.css */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    color: #fff;
+    font-family: sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#buttons {
+    padding: 10px;
+}
+
+button {
+    background-color: #fff;
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+textarea {
+    flex: 1;
+    width: 100%;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    resize: none;
+}

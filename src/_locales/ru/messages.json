@@ -1,0 +1,23 @@
+{
+  "name": {
+    "message": "Простое копирование команды aria2 для загрузки"
+  },
+  "description": {
+    "message": "Простое копирование команды aria2 для загрузки"
+  },
+  "contextMenuTitle": {
+    "message": "Скопировать команду загрузки aria2"
+  },
+  "save": {
+    "message": "Сохранить",
+    "description": "Текст кнопки сохранения"
+  },
+  "reset": {
+    "message": "Сбросить",
+    "description": "Текст кнопки сброса"
+  },
+  "optionsTitle": {
+    "message": "Настройки расширения",
+    "description": "Заголовок страницы настроек"
+  }
+}

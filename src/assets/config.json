@@ -1,0 +1,20 @@
+{
+  "changelog": {
+    "migration1Fn": false
+  },
+  "firstStart": false,
+  "extensionUuid": "96042507-f990-40ff-9adc-6210a5fa54f6",
+  "options": [
+    {
+      "urlPattern": ".*",
+      "urlPatternFlags": "i",
+      "useHeaders": true,
+      "headerParameterName": "--header",
+      "useAllowedHeaders": false,
+      "allowedHeaders": [
+        "User-Agent"
+      ],
+      "commandTemplate": "aria2 %h %u"
+    }
+  ]
+}

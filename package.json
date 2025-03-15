@@ -1,0 +1,30 @@
+{
+  "name": "simple-copy-aria2-download-command",
+  "version": "1.0.0",
+  "description": "simple-copy-aria2-download-command",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serj-kzv/simple-copy-aria2-download-command.git"
+  },
+  "author": "serj-kzv",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/serj-kzv/simple-copy-aria2-download-command/issues"
+  },
+  "homepage": "https://github.com/serj-kzv/simple-copy-aria2-download-command#readme",
+  "devDependencies": {
+    "@babel/core": "^7.22.9",
+    "@babel/preset-env": "^7.22.9",
+    "babel-loader": "^9.1.2",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "terser-webpack-plugin": "^5.3.9",
+    "webpack": "^5.88.1",
+    "webpack-cli": "^5.1.4"
+  },
+  "scripts": {
+    "watch": "webpack --config webpack.config.js --mode development --watch",
+    "build": "webpack --config webpack.config.js --mode production"
+  }
+}
