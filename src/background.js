@@ -3,6 +3,7 @@ import Constants from "./constants.js";
 import startMigrationFn from "./lib/migration/migration.js";
 import changelog from "./changelog/changelog.js";
 import getUrlByTabIdAndFrameIdFn from "./lib/getUrlByTabIdAndFrameId.js";
+import escapeCmdUniversal from "./lib/escapeCmdUniversal.js";
 
 const option = new Option();
 
@@ -99,7 +100,7 @@ const handleProbRequestFn = async ({url, requestHeaders, method}) => {
     } else {
         command = command.replace("%h", '');
     }
-    command = command.replace("%u", urlString);
+    command = command.replace("%u", escapeCmdUniversal(urlString));
 
     console.log('command', command);
 
