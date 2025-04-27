@@ -20,7 +20,7 @@
       "allowedHeaders": [
         "User-Agent"
       ],
-      "commandTemplate": "aria2 -s4 --max-tries=0 --retry-wait=1 --continue %h %u"
+      "commandTemplate": "aria2 %h %u"
     }
   ]
 }
