@@ -141,8 +141,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(async ({url, requestHeaders, 
         }
     },
     {
-        urls: ["<all_urls>"],
-        types: ["xmlhttprequest"]
+        urls: ["<all_urls>"]
     },
     ["blocking", "requestHeaders"]
 );

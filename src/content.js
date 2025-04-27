@@ -1,5 +1,6 @@
 import Constants from "./constants.js";
 import Option from "./lib/Option.js";
+import sendGetViaLink from "./lib/sendGetViaLink.js";
 
 const option = new Option();
 
@@ -32,9 +33,7 @@ browser.runtime.onMessage.addListener(async ({type, payload: {linkUrl, tabId, fr
     url.searchParams.append(frameIdUrlParameterName, frameId);
 
     console.log('send prob', url)
-    fetch(url.toString(), {cache: 'no-store'})
-        .catch(() => {
-        });
+    sendGetViaLink(url.toString())
 });
 browser.runtime.onMessage.addListener(({type, payload: {command}}) => {
     if (type !== Constants.messageType.copyDownloadCommand) {
