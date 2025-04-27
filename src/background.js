@@ -3,7 +3,7 @@ import Constants from "./constants.js";
 import startMigrationFn from "./lib/migration/migration.js";
 import changelog from "./changelog/changelog.js";
 import getUrlByTabIdAndFrameIdFn from "./lib/getUrlByTabIdAndFrameId.js";
-import escapeCmdUniversal from "./lib/escapeCmdUniversal.js";
+import {escapeCmdUniversal, PLATFORM} from "./lib/escapeCmdUniversal.js";
 
 const option = new Option();
 
@@ -100,7 +100,21 @@ const handleProbRequestFn = async ({url, requestHeaders, method}) => {
     } else {
         command = command.replace("%h", '');
     }
-    command = command.replace("%u", escapeCmdUniversal(urlString));
+
+    const escapeOption = urlOption[Constants.option.escapeCmdUniversal.escapeCmdUniversal];
+    let escapedCmd;
+
+    if (escapeOption !== undefined && Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabled])) {
+        const platforms = escapeOption[Constants.option.escapeCmdUniversal.platforms];
+        const currentPlatforms = platforms.length > 0 ? platforms : [PLATFORM.AUTO];
+
+        escapedCmd = escapeCmdUniversal(urlString, currentPlatforms);
+    } else {
+        escapedCmd = urlString
+    }
+    console.debug('escapedCmd', escapedCmd);
+
+    command = command.replace("%u", escapedCmd);
 
     console.log('command', command);
 

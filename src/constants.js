@@ -11,7 +11,12 @@ const Constants = Object.freeze({
         headerParameterName: 'headerParameterName',
         useAllowedHeaders: 'useAllowedHeaders',
         allowedHeaders: 'allowedHeaders',
-        commandTemplate: 'commandTemplate'
+        commandTemplate: 'commandTemplate',
+        escapeCmdUniversal: {
+            escapeCmdUniversal: 'escapeCmdUniversal',
+            enabled: 'enabled',
+            platforms: 'platforms'
+        },
     }),
     messageType: {
         execProbRequest: 'exec-prob-request',
