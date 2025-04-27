@@ -8,6 +8,7 @@ const Constants = Object.freeze({
         urlPattern: 'urlPattern',
         urlPatternFlags: 'urlPatternFlags',
         useHeaders: 'useHeaders',
+        name: 'name',
         headerParameterName: 'headerParameterName',
         useAllowedHeaders: 'useAllowedHeaders',
         allowedHeaders: 'allowedHeaders',
