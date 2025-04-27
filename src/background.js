@@ -145,3 +145,10 @@ browser.webRequest.onBeforeSendHeaders.addListener(async ({url, requestHeaders, 
     },
     ["blocking", "requestHeaders"]
 );
+browser.runtime.onMessage.addListener(({type, payload: {command}}) => {
+    if (type !== Constants.messageType.copyDownloadCommandInBackground) {
+        return;
+    }
+    console.log('copy command in background', {type, payload: {command}});
+    navigator.clipboard.writeText(command)
+});

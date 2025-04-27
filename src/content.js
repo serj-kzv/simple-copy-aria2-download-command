@@ -40,5 +40,11 @@ browser.runtime.onMessage.addListener(({type, payload: {command}}) => {
         return;
     }
     console.log('command', command);
-    navigator.clipboard.writeText(command);
+    try {
+        navigator.clipboard.writeText(command);
+    } catch (e) {
+        console.warn('Somewhat writeText does not work in content script', e);
+        console.debug('command will be sent to background to copy', command)
+        browser.runtime.sendMessage({type: Constants.messageType.copyDownloadCommandInBackground, payload: {command}});
+    }
 });
