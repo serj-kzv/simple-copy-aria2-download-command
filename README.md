@@ -1,64 +1,97 @@
-# simple-copy-aria2-download-command
+## Description
 
-A lightweight WebExtension that copies URLs as aria2 download commands to your clipboard.
+A lightweight browser extension that adds a convenient context menu item for copying a GET request link as an `aria2` command. With one click, you can copy a ready-to-use `aria2c` command for efficient, multi-connection downloads.
 
 ## Features
 
-- Right-click on any link and select **Copy aria2 command**.
-- Automatically formats the aria2c command with the URL.
+- Copy any link (GET) as an `aria2c` command
+- Supports custom headers and parameters passed via the URL
+- Zero-config: works out of the box
 
-## Requirements
+## Prerequisites
 
-- **Node.js** v14 or higher
-- **npm** (bundled with Node.js)
+- Node.js (>= 14)
+- npm (>= 6)
+- Firefox or Chrome (for testing/loading the extension)
 
 ## Installation
 
-1. **Install Node.js**
-    - Download the LTS version from https://nodejs.org/ and follow the installer instructions.
-    - Verify installation:
-      ```bash
-      node -v
-      npm -v
-      ```
+1. **Clone the repository**
 
-2. **Clone the repository**
    ```bash
    git clone https://github.com/serj-kzv/simple-copy-aria2-download-command.git
    cd simple-copy-aria2-download-command
    ```
 
-3. **Install dependencies**
+2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
-## Building
+## Development
 
-- **Development mode (with watch):**
-  ```bash
-  npm run watch
-  ```
-  Automatically rebuilds on file changes.
+During development, use Webpack in watch mode to rebuild on changes:
 
-- **Production build:**
+```bash
+npm run watch
+```
+
+For Firefox-specific development, you can run with `web-ext`:
+
+```bash
+npx web-ext run
+```
+
+## Building for Production
+
+- **Build**: Bundle and minify the extension for production.
+
   ```bash
   npm run build
   ```
-  Outputs optimized files to the `dist/` directory.
 
-## Installing the Extension
+- **Pack**: Create a packaged `.xpi` (Firefox) or `.zip` (Chrome) for distribution.
 
-1. Open your browser's extensions page (e.g., `about:debugging` in Firefox or `chrome://extensions/` in Chrome).
-2. Enable **Developer mode**.
-3. Click **Load unpacked** and select the `dist/` directory.
-4. The extension should now be available and ready to use.
+  ```bash
+  npm run pack
+  ```
+
+  The output file will be located in the `dist/` directory.
+
+## Usage
+
+1. Load the extension into your browser:
+    - **Firefox**: Go to `about:debugging#/runtime/this-firefox` → "Load Temporary Add-on" → select `dist/manifest.json`.
+    - **Chrome**: Go to `chrome://extensions/` → Enable "Developer mode" → "Load unpacked" → select the `dist/` folder.
+
+2. Right-click any link on a webpage.
+3. Choose **Copy as aria2 Download Command**.
+4. Paste the command into your terminal to start the download:
+
+   ```bash
+   aria2 "https://example.com/file.zip"
+   ```
 
 ## Contributing
 
-Feel free to open issues or submit pull requests on [GitHub](https://github.com/serj-kzv/simple-copy-aria2-download-command).
+Feedback and contributions are welcome! Please open an issue or submit a pull request:
+
+- Issues: https://github.com/serj-kzv/simple-copy-aria2-download-command/issues
+- Pull Requests: https://github.com/serj-kzv/simple-copy-aria2-download-command/pulls
 
 ## License
 
-MIT © serj-kzv
+This project is licensed under the [MIT License](https://github.com/serj-kzv/simple-copy-aria2-download-command/blob/main/LICENSE).
+
+## Author
+
+**serj-kzv**
+
+- GitHub: https://github.com/serj-kzv
+- Homepage: https://github.com/serj-kzv/simple-copy-aria2-download-command#readme
+
+---
+
+> Crafted with ❤️ by serj-kzv
 

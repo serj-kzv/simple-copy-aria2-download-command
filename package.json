@@ -1,7 +1,7 @@
 {
   "name": "simple-copy-aria2-download-command",
   "version": "1.0.0",
-  "description": "simple-copy-aria2-download-command",
+  "description": "You can copy a link with a GET request type as a command for the aria2 utility to download a resource via the link.",
   "type": "module",
   "repository": {
     "type": "git",
