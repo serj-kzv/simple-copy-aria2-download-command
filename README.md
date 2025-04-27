@@ -1,6 +1,6 @@
 ## Description
 
-A lightweight browser extension that adds a convenient context menu item for copying a GET request link as an `aria2` command. With one click, you can copy a ready-to-use `aria2c` command for efficient, multi-connection downloads.
+A lightweight browser extension that adds a convenient context menu item for copying a GET request link as an `aria2` command. With one click, you can copy a ready-to-use `aria2` command for efficient, multi-connection downloads.
 
 ## Features
 
