@@ -4,12 +4,8 @@
   "version": "1.0.0",
   "description": "__MSG_description__",
   "author": "serj-kzv",
+  "homepage_url": "https://github.com/serj-kzv/simple-copy-aria2-download-command",
   "default_locale": "en",
-  "applications": {
-    "gecko": {
-      "id": "simple-copy-aria2-download-url@serj-kzv"
-    }
-  },
   "icons": {
     "16": "icon.svg",
     "32": "icon.svg",
