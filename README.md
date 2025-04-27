@@ -4,7 +4,7 @@ A lightweight browser extension that adds a convenient context menu item for cop
 
 ## Features
 
-- Copy any link (GET) as an `aria2c` command
+- Copy any link (GET) as an `aria2` command
 - Supports custom headers and parameters passed via the URL
 - Zero-config: works out of the box
 
