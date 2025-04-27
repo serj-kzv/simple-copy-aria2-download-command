@@ -1,10 +1,10 @@
 import Constants from "./constants.js";
 import Option from "./lib/Option.js";
-import sendGetViaLink from "./lib/sendGetViaLink.js";
+import sendGetVia from "./lib/sendGetVia.js";
 
 const option = new Option();
 
-browser.runtime.onMessage.addListener(async ({type, payload: {linkUrl, tabId, frameId}}) => {
+browser.runtime.onMessage.addListener(async ({type, payload: {linkUrl, tabId, frameId, mediaType}}) => {
     if (type !== Constants.messageType.execProbRequest) {
         return;
     }
@@ -32,13 +32,13 @@ browser.runtime.onMessage.addListener(async ({type, payload: {linkUrl, tabId, fr
     url.searchParams.append(tabIdUrlParameterName, tabId);
     url.searchParams.append(frameIdUrlParameterName, frameId);
 
-    console.log('send prob', url)
-    sendGetViaLink(url.toString())
+    console.log('send prob', url);
+    sendGetVia(mediaType, url.toString());
 });
 browser.runtime.onMessage.addListener(({type, payload: {command}}) => {
     if (type !== Constants.messageType.copyDownloadCommand) {
         return;
     }
-    console.log('command', command)
+    console.log('command', command);
     navigator.clipboard.writeText(command);
 });

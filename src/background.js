@@ -36,7 +36,7 @@ browser.contextMenus.onClicked.addListener(({menuItemId, linkUrl, frameId, srcUr
         tabId,
         {
             type: Constants.messageType.execProbRequest,
-            payload: {linkUrl, frameId, tabId}
+            payload: {linkUrl, frameId, tabId, mediaType}
         },
         {frameId}
     );
