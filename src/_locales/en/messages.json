@@ -1,6 +1,6 @@
 {
   "name": {
-    "message": "Simple copy aria2 download url"
+    "message": "Simple copy aria2 download command"
   },
   "description": {
     "message": "You can copy a link with a GET request type as a command for the aria2 utility to download a resource via the link."
