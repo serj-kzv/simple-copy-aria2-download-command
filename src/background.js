@@ -27,7 +27,8 @@ browser.contextMenus.onClicked.addListener(({menuItemId, linkUrl, frameId, srcUr
     if (menuItemId !== Constants.element.contextMenuId) {
         return;
     }
-    if (["image", "video", "audio"].includes(mediaType)) {
+    console.debug('current contextMenus.onClicked is', {menuItemId, linkUrl, frameId, srcUrl, mediaType}, {id: tabId});
+    if (mediaType !== undefined && ["image", "video", "audio"].includes(mediaType)) {
         linkUrl = srcUrl;
     }
     console.log('send', Constants.messageType.execProbRequest);
