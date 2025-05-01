@@ -6,7 +6,9 @@ const typeNames = new Map(Object.entries({
 }));
 
 const sendGetVia = (mediaType, url) => {
+    console.debug('params:', {mediaType, url});
     const {name, link} = typeNames.get(mediaType);
+    console.debug('found typeName', {name, link});
     const element = document.createElement(name);
     element[link] = url;
     element.style.display = 'none';

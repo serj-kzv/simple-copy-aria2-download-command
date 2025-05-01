@@ -5,7 +5,7 @@ export default class Option {
 
     constructor(defaultConfigPath = '/config.json') {
         this.#defaultConfigPath = defaultConfigPath;
-        this.#startUpdateListener();
+        this.#cacheReset();
     }
 
     async get() {
@@ -31,7 +31,7 @@ export default class Option {
         this.#config = config;
     }
 
-    #startUpdateListener() {
+    #cacheReset() {
         browser.storage.onChanged.addListener(() => this.#config = null);
     }
 }

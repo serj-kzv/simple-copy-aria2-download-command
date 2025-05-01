@@ -6,14 +6,17 @@ import getUrlByTabIdAndFrameIdFn from "./lib/getUrlByTabIdAndFrameId.js";
 import {escapeCmdUniversal, PLATFORM} from "./lib/escapeCmdUniversal.js";
 
 const option = new Option();
+const migrateFn = async () => {
+    console.log('start migration config', await option.get());
+    console.log('start migration changelog', changelog);
+    const config = await startMigrationFn(await option.get(), changelog);
+    console.log('stop migration', await option.get());
+    await option.save(config);
+};
 
 browser.runtime.onInstalled.addListener(async ({reason}) => {
-    if (['install', 'update'].includes(reason)) {
-        console.log('start migration config', await option.get());
-        console.log('start migration changelog', changelog);
-        const config = await startMigrationFn(await option.get(), changelog);
-        console.log('stop migration', await option.get());
-        await option.save(config);
+    if (reason === 'install' || reason === 'update') {
+        await migrateFn();
     }
 });
 browser.runtime.onInstalled.addListener(() => {
@@ -28,7 +31,10 @@ browser.contextMenus.onClicked.addListener(({menuItemId, linkUrl, frameId, srcUr
         return;
     }
     console.debug('current contextMenus.onClicked is', {menuItemId, linkUrl, frameId, srcUrl, mediaType}, {id: tabId});
-    if (mediaType !== undefined && ["image", "video", "audio"].includes(mediaType)) {
+    if (mediaType === undefined) { // treat undefined as a link
+        mediaType = 'link';
+    }
+    if (["image", "video", "audio"].includes(mediaType)) {
         linkUrl = srcUrl;
     }
     console.log('send', Constants.messageType.execProbRequest);
