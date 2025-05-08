@@ -1,6 +1,6 @@
 import Constants from "../constants.js";
 
-const migration1Fn = async (config) => {
+const migration1Fn = async config => {
     config[Constants.option.firstStart] = true;
     config[Constants.option.extensionUuid] = crypto.randomUUID();
 };

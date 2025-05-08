@@ -12,6 +12,8 @@ const Constants = Object.freeze({
         headerParameterName: 'headerParameterName',
         useAllowedHeaders: 'useAllowedHeaders',
         allowedHeaders: 'allowedHeaders',
+        useDisallowedHeaders: 'useDisallowedHeaders',
+        disallowedHeaders: 'disallowedHeaders',
         commandTemplate: 'commandTemplate',
         escapeCmdUniversal: {
             escapeCmdUniversal: 'escapeCmdUniversal',

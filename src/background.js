@@ -1,22 +1,15 @@
 import Option from "./lib/Option.js";
 import Constants from "./constants.js";
-import startMigrationFn from "./lib/migration/migration.js";
-import changelog from "./changelog/changelog.js";
 import getUrlByTabIdAndFrameIdFn from "./lib/getUrlByTabIdAndFrameId.js";
 import {escapeCmdUniversal, PLATFORM} from "./lib/escapeCmdUniversal.js";
+import migrateFn from "./changelog/migrateFn.js";
 
 const option = new Option();
-const migrateFn = async () => {
-    console.log('start migration config', await option.get());
-    console.log('start migration changelog', changelog);
-    const config = await startMigrationFn(await option.get(), changelog);
-    console.log('stop migration', await option.get());
-    await option.save(config);
-};
 
 browser.runtime.onInstalled.addListener(async ({reason}) => {
     if (reason === 'install' || reason === 'update') {
-        await migrateFn();
+        const config = await migrateFn(await option.get());
+        await option.save(config);
     }
 });
 browser.runtime.onInstalled.addListener(() => {
@@ -89,8 +82,13 @@ const handleProbRequestFn = async ({url, requestHeaders, method}) => {
     let command = urlOption[Constants.option.commandTemplate];
 
     if (Boolean(urlOption[Constants.option.useHeaders])) {
+        if (Boolean(urlOption[Constants.option.useDisallowedHeaders])) {
+            const disallowedHeaders = urlOption[Constants.option.disallowedHeaders] || [];
+            console.log('disallowedHeaders', disallowedHeaders);
+            requestHeaders = requestHeaders.filter(({name}) => !disallowedHeaders.includes(name));
+        }
         if (Boolean(urlOption[Constants.option.useAllowedHeaders])) {
-            const allowedHeaders = urlOption[Constants.option.allowedHeaders];
+            const allowedHeaders = urlOption[Constants.option.allowedHeaders] || [];
             console.log('AllowedHeaders', allowedHeaders);
             requestHeaders = requestHeaders.filter(({name}) => allowedHeaders.includes(name));
         }
