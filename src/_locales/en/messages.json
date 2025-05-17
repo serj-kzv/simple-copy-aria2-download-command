@@ -16,5 +16,8 @@
   },
   "optionsTitle": {
     "message": "Extension Options"
+  },
+  "optionsFormatError": {
+    "message": "There is an error in the config format"
   }
 }

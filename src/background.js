@@ -8,16 +8,25 @@ const option = new Option();
 
 browser.runtime.onInstalled.addListener(async ({reason}) => {
     if (reason === 'install' || reason === 'update') {
+        console.debug('It is the first installation or update, the extension config will be migrated');
         const config = await migrateFn(await option.get());
+        if (reason === 'install') {
+            console.debug('It is the first installation, the extension uuid will be generated');
+            config[Constants.option.extensionUuid] = crypto.randomUUID();
+            console.debug('It is the first installation, the extension uuid was generated', config[Constants.option.extensionUuid]);
+        }
         await option.save(config);
+        console.debug('Migration is completed, old context menu will be removed');
+        await browser.contextMenus.removeAll();
+        console.debug('Migration is completed, old context menu was removed');
+        console.debug('New context menu will be added');
+        browser.contextMenus.create({
+            id: Constants.element.contextMenuId,
+            title: browser.i18n.getMessage("contextMenuTitle"),
+            contexts: ["link", "image", "video", "audio"]
+        });
+        console.debug('New context menu was added');
     }
-});
-browser.runtime.onInstalled.addListener(() => {
-    browser.contextMenus.create({
-        id: Constants.element.contextMenuId,
-        title: browser.i18n.getMessage("contextMenuTitle"),
-        contexts: ["link", "image", "video", "audio"]
-    });
 });
 browser.contextMenus.onClicked.addListener(({menuItemId, linkUrl, frameId, srcUrl, mediaType}, {id: tabId}) => {
     if (menuItemId !== Constants.element.contextMenuId) {

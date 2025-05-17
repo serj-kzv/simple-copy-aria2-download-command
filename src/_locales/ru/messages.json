@@ -16,5 +16,8 @@
   },
   "optionsTitle": {
     "message": "Настройки расширения"
+  },
+  "optionsFormatError": {
+    "message": "Ошибка в формате конфигурации"
   }
 }

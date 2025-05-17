@@ -17,7 +17,13 @@ const init = async () => {
         optionText.value = JSON.stringify(await option.get(), null, "\t");
     };
 
-    const saveOptions = () => option.save(JSON.parse(optionText.value));
+    const saveOptions = () => {
+        try {
+            option.save(JSON.parse(optionText.value));
+        } catch (e) {
+            alert(`${browser.i18n.getMessage('optionsFormatError')}: ${e}`);
+        }
+    }
 
     const resetOptions = async () => {
         await option.reset();

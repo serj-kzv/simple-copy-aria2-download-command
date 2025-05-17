@@ -1,9 +1,12 @@
 {
   "changelog": {
-    "migration1Fn": false
+    "migration1Fn": true,
+    "migration2Fn": true,
+    "migration3Fn": true,
+    "migration4Fn": true
   },
-  "firstStart": false,
-  "extensionUuid": "96042507-f990-40ff-9adc-6210a5fa54f6",
+  "firstStart": true,
+  "extensionUuid": "9458080f-40fc-4357-b000-81133ef06365",
   "options": [
     {
       "urlPattern": ".*",
@@ -20,7 +23,12 @@
       "allowedHeaders": [
         "User-Agent"
       ],
-      "commandTemplate": "aria2 %h %u"
+      "commandTemplate": "aria2c -c -s4 -m0 -k1M --stream-piece-selector=inorder --summary-interval=1 --console-log-level=notice %h %u",
+      "name": "common",
+      "useDisallowedHeaders": true,
+      "disallowedHeaders": [
+        "Range"
+      ]
     }
   ]
 }
