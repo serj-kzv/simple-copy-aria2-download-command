@@ -39,8 +39,8 @@ browser.contextMenus.onClicked.addListener(({menuItemId, linkUrl, frameId, srcUr
     if (["image", "video", "audio"].includes(mediaType)) {
         linkUrl = srcUrl;
     }
-    console.log('send', Constants.messageType.execProbRequest);
-    console.log('send linkUrl', linkUrl);
+    console.debug('send', Constants.messageType.execProbRequest);
+    console.debug('send linkUrl', linkUrl);
     browser.tabs.sendMessage(
         tabId,
         {
@@ -63,8 +63,8 @@ const handleProbRequestFn = async ({url, requestHeaders, method}) => {
     if (!searchParams.has(urlParameterName)) {
         return {};
     }
-    console.log('{url, requestHeaders, method}', {url, requestHeaders, method});
-    console.log('urlParameterName', urlParameterName);
+    console.debug('{url, requestHeaders, method}', {url, requestHeaders, method});
+    console.debug('urlParameterName', urlParameterName);
 
     const tabIdUrlParameterName = Constants.option.tabIdUrlParameterName(urlParameterName);
     const frameIdUrlParameterName = Constants.option.frameIdUrlParameterName(urlParameterName);
@@ -77,7 +77,7 @@ const handleProbRequestFn = async ({url, requestHeaders, method}) => {
 
     const urlString = url.toString();
     const domainUrl = await getUrlByTabIdAndFrameIdFn(tabId, frameId);
-    console.log('domainUrl', domainUrl);
+    console.debug('domainUrl', domainUrl);
     const urlOption = config[Constants.option.options].find(({urlPattern, urlPatternFlags}) =>
         new RegExp(urlPattern, urlPatternFlags).test(domainUrl));
 
@@ -85,20 +85,20 @@ const handleProbRequestFn = async ({url, requestHeaders, method}) => {
         return {cancel: true};
     }
 
-    console.log('config', config)
-    console.log('urlOption', urlOption)
+    console.debug('config', config)
+    console.debug('urlOption', urlOption)
 
     let command = urlOption[Constants.option.commandTemplate];
 
     if (Boolean(urlOption[Constants.option.useHeaders])) {
         if (Boolean(urlOption[Constants.option.useDisallowedHeaders])) {
             const disallowedHeaders = urlOption[Constants.option.disallowedHeaders] || [];
-            console.log('disallowedHeaders', disallowedHeaders);
+            console.debug('disallowedHeaders', disallowedHeaders);
             requestHeaders = requestHeaders.filter(({name}) => !disallowedHeaders.includes(name));
         }
         if (Boolean(urlOption[Constants.option.useAllowedHeaders])) {
             const allowedHeaders = urlOption[Constants.option.allowedHeaders] || [];
-            console.log('AllowedHeaders', allowedHeaders);
+            console.debug('AllowedHeaders', allowedHeaders);
             requestHeaders = requestHeaders.filter(({name}) => allowedHeaders.includes(name));
         }
 
@@ -130,10 +130,10 @@ const handleProbRequestFn = async ({url, requestHeaders, method}) => {
 
     command = command.replace("%u", escapedCmd);
 
-    console.log('command', command);
+    console.debug('command', command);
 
-    console.log('tabId', tabId);
-    console.log('frameId', frameId);
+    console.debug('tabId', tabId);
+    console.debug('frameId', frameId);
 
     browser.tabs.sendMessage(
         tabId,
@@ -150,7 +150,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(async ({url, requestHeaders, 
         try {
             return await handleProbRequestFn({url, requestHeaders, method});
         } catch (e) {
-            console.log('error', e);
+            console.debug('error', e);
             return {};
         }
     },
@@ -163,7 +163,7 @@ browser.runtime.onMessage.addListener(async ({type, payload: {command}}) => {
     if (type !== Constants.messageType.copyDownloadCommandInBackground) {
         return;
     }
-    console.log('copy command in background', {type, payload: {command}});
+    console.debug('copy command in background', {type, payload: {command}});
     await navigator.clipboard.writeText(command);
-    console.log('command was copied in background', {type, payload: {command}});
+    console.debug('command was copied in background', {type, payload: {command}});
 });

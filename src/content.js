@@ -9,21 +9,21 @@ browser.runtime.onMessage.addListener(async ({type, payload: {linkUrl, tabId, fr
         return;
     }
 
-    console.log('start prob req', Constants.messageType.execProbRequest);
-    console.log('linkUrl', linkUrl);
+    console.debug('start prob req', Constants.messageType.execProbRequest);
+    console.debug('linkUrl', linkUrl);
 
     let url;
 
     try {
         url = new URL(linkUrl);
     } catch (e) {
-        console.log('url', url);
+        console.debug('url', url);
         console.error(e);
     }
 
-    console.log('OPTION', option)
+    console.debug('OPTION', option)
     const config = await option.get();
-    console.log('config', config)
+    console.debug('config', config)
     const urlParameterName = config[Constants.option.extensionUuid];
     const tabIdUrlParameterName = Constants.option.tabIdUrlParameterName(urlParameterName);
     const frameIdUrlParameterName = Constants.option.frameIdUrlParameterName(urlParameterName);
@@ -32,14 +32,14 @@ browser.runtime.onMessage.addListener(async ({type, payload: {linkUrl, tabId, fr
     url.searchParams.append(tabIdUrlParameterName, tabId);
     url.searchParams.append(frameIdUrlParameterName, frameId);
 
-    console.log('send prob', url);
+    console.debug('send prob', url);
     sendGetVia(mediaType, url.toString());
 });
 browser.runtime.onMessage.addListener(({type, payload: {command}}) => {
     if (type !== Constants.messageType.copyDownloadCommand) {
         return;
     }
-    console.log('command', command);
+    console.debug('command', command);
     try {
         navigator.clipboard.writeText(command);
     } catch (e) {
