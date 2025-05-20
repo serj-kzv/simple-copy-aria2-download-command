@@ -9,21 +9,21 @@ browser.runtime.onMessage.addListener(async ({type, payload: {linkUrl, tabId, fr
         return;
     }
 
-    console.debug('start prob req', Constants.messageType.execProbRequest);
-    console.debug('linkUrl', linkUrl);
+    console.log('start prob req', Constants.messageType.execProbRequest);
+    console.log('linkUrl', linkUrl);
 
     let url;
 
     try {
         url = new URL(linkUrl);
     } catch (e) {
-        console.debug('url', url);
+        console.log('url', url);
         console.error(e);
     }
 
-    console.debug('OPTION', option)
+    console.log('OPTION', option)
     const config = await option.get();
-    console.debug('config', config)
+    console.log('config', config)
     const urlParameterName = config[Constants.option.extensionUuid];
     const tabIdUrlParameterName = Constants.option.tabIdUrlParameterName(urlParameterName);
     const frameIdUrlParameterName = Constants.option.frameIdUrlParameterName(urlParameterName);
@@ -32,19 +32,19 @@ browser.runtime.onMessage.addListener(async ({type, payload: {linkUrl, tabId, fr
     url.searchParams.append(tabIdUrlParameterName, tabId);
     url.searchParams.append(frameIdUrlParameterName, frameId);
 
-    console.debug('send prob', url);
+    console.log('send prob', url);
     sendGetVia(mediaType, url.toString());
 });
 browser.runtime.onMessage.addListener(({type, payload: {command}}) => {
     if (type !== Constants.messageType.copyDownloadCommand) {
         return;
     }
-    console.debug('command', command);
+    console.log('command', command);
     try {
         navigator.clipboard.writeText(command);
     } catch (e) {
         console.warn('Somewhat writeText does not work in content script', e);
-        console.debug('command will be sent to background to copy', command)
+        console.log('command will be sent to background to copy', command)
         browser.runtime.sendMessage({type: Constants.messageType.copyDownloadCommandInBackground, payload: {command}});
     }
 });

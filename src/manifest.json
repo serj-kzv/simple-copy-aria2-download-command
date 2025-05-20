@@ -44,5 +44,10 @@
     "<all_urls>",
     "clipboardWrite",
     "webNavigation"
-  ]
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{5d8940a4-79d7-4e29-86d4-73cd7e8f3947}"
+    }
+  }
 }

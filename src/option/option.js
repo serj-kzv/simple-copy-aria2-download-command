@@ -1,5 +1,6 @@
 import Option from "../lib/Option.js";
 import migrateFn from "../changelog/migrateFn.js";
+import Constants from "../constants.js";
 
 const option = new Option();
 const init = async () => {
@@ -28,6 +29,7 @@ const init = async () => {
     const resetOptions = async () => {
         await option.reset();
         const config = await migrateFn(await option.get());
+        config[Constants.option.extensionUuid] = crypto.randomUUID();
         await option.save(config);
         await loadOptions();
     };

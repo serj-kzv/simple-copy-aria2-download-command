@@ -2,168 +2,193 @@ import Option from "./lib/Option.js";
 import Constants from "./constants.js";
 import getUrlByTabIdAndFrameIdFn from "./lib/getUrlByTabIdAndFrameId.js";
 import {escapeCmdUniversal, PLATFORM} from "./lib/escapeCmdUniversal.js";
-import migrateFn from "./changelog/migrateFn.js";
 
+console.log('start background script');
+
+console.log('option will be created');
 const option = new Option();
+console.log('option was created');
 
-browser.runtime.onInstalled.addListener(async ({reason}) => {
-    if (reason === 'install' || reason === 'update') {
-        console.debug('It is the first installation or update, the extension config will be migrated');
-        const config = await migrateFn(await option.get());
-        if (reason === 'install') {
-            console.debug('It is the first installation, the extension uuid will be generated');
-            config[Constants.option.extensionUuid] = crypto.randomUUID();
-            console.debug('It is the first installation, the extension uuid was generated', config[Constants.option.extensionUuid]);
-        }
-        await option.save(config);
-        console.debug('Migration is completed, old context menu will be removed');
-        await browser.contextMenus.removeAll();
-        console.debug('Migration is completed, old context menu was removed');
-        console.debug('New context menu will be added');
-        browser.contextMenus.create({
+(async () => {
+    const makeContextMenuFn = async () => {
+        await browser.contextMenus.create({
             id: Constants.element.contextMenuId,
             title: browser.i18n.getMessage("contextMenuTitle"),
             contexts: ["link", "image", "video", "audio"]
         });
-        console.debug('New context menu was added');
-    }
-});
-browser.contextMenus.onClicked.addListener(({menuItemId, linkUrl, frameId, srcUrl, mediaType}, {id: tabId}) => {
-    if (menuItemId !== Constants.element.contextMenuId) {
-        return;
-    }
-    console.debug('current contextMenus.onClicked is', {menuItemId, linkUrl, frameId, srcUrl, mediaType}, {id: tabId});
-    if (mediaType === undefined) { // treat undefined as a link
-        mediaType = 'link';
-    }
-    if (["image", "video", "audio"].includes(mediaType)) {
-        linkUrl = srcUrl;
-    }
-    console.debug('send', Constants.messageType.execProbRequest);
-    console.debug('send linkUrl', linkUrl);
-    browser.tabs.sendMessage(
-        tabId,
-        {
-            type: Constants.messageType.execProbRequest,
-            payload: {linkUrl, frameId, tabId, mediaType}
-        },
-        {frameId}
-    );
-});
-const handleProbRequestFn = async ({url, requestHeaders, method}) => {
-    if (method !== 'GET') {
-        return {};
-    }
-    url = new URL(url);
+    };
 
-    const {searchParams} = url;
-    const config = await option.get();
-    const urlParameterName = config[Constants.option.extensionUuid];
+    await makeContextMenuFn();
 
-    if (!searchParams.has(urlParameterName)) {
-        return {};
-    }
-    console.debug('{url, requestHeaders, method}', {url, requestHeaders, method});
-    console.debug('urlParameterName', urlParameterName);
+    console.log('browser.runtime.onInstalled.addListener will be started');
 
-    const tabIdUrlParameterName = Constants.option.tabIdUrlParameterName(urlParameterName);
-    const frameIdUrlParameterName = Constants.option.frameIdUrlParameterName(urlParameterName);
-    const tabId = Number(searchParams.get(tabIdUrlParameterName));
-    const frameId = Number(searchParams.get(frameIdUrlParameterName));
+    browser.runtime.onInstalled.addListener(async ({reason}) => {
+        if (reason === 'install' || reason === 'update') {
+            console.log('It is the first installation or update, the extension config will be migrated');
+            const config = await migrateFn(await option.get());
+            if (reason === 'install') {
+                console.log('It is the first installation, the extension uuid will be generated');
+                config[Constants.option.extensionUuid] = crypto.randomUUID();
+                console.log('It is the first installation, the extension uuid was generated', config[Constants.option.extensionUuid]);
+            }
+            await option.save(config);
 
-    searchParams.delete(urlParameterName);
-    searchParams.delete(tabIdUrlParameterName);
-    searchParams.delete(frameIdUrlParameterName);
-
-    const urlString = url.toString();
-    const domainUrl = await getUrlByTabIdAndFrameIdFn(tabId, frameId);
-    console.debug('domainUrl', domainUrl);
-    const urlOption = config[Constants.option.options].find(({urlPattern, urlPatternFlags}) =>
-        new RegExp(urlPattern, urlPatternFlags).test(domainUrl));
-
-    if (urlOption === undefined) {
-        return {cancel: true};
-    }
-
-    console.debug('config', config)
-    console.debug('urlOption', urlOption)
-
-    let command = urlOption[Constants.option.commandTemplate];
-
-    if (Boolean(urlOption[Constants.option.useHeaders])) {
-        if (Boolean(urlOption[Constants.option.useDisallowedHeaders])) {
-            const disallowedHeaders = urlOption[Constants.option.disallowedHeaders] || [];
-            console.debug('disallowedHeaders', disallowedHeaders);
-            requestHeaders = requestHeaders.filter(({name}) => !disallowedHeaders.includes(name));
+            console.log('New context menu will be added');
+            await browser.contextMenus.removeAll();
+            await makeContextMenuFn();
+            console.log('New context menu was added');
         }
-        if (Boolean(urlOption[Constants.option.useAllowedHeaders])) {
-            const allowedHeaders = urlOption[Constants.option.allowedHeaders] || [];
-            console.debug('AllowedHeaders', allowedHeaders);
-            requestHeaders = requestHeaders.filter(({name}) => allowedHeaders.includes(name));
+    });
+
+    console.log('browser.contextMenus.onClicked.addListener will be started');
+    browser.contextMenus.onClicked.addListener(({menuItemId, linkUrl, frameId, srcUrl, mediaType}, {id: tabId}) => {
+        if (menuItemId !== Constants.element.contextMenuId) {
+            return;
         }
-
-        const headerParameterName = urlOption[Constants.option.headerParameterName];
-        const headers = requestHeaders
-            .map(({
-                      name,
-                      value
-                  }) => `${headerParameterName}="${name}: ${value}"`)
-            .join(" ");
-
-        command = command.replace("%h", headers);
-    } else {
-        command = command.replace("%h", '');
-    }
-
-    const escapeOption = urlOption[Constants.option.escapeCmdUniversal.escapeCmdUniversal];
-    let escapedCmd;
-
-    if (escapeOption !== undefined && Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabled])) {
-        const platforms = escapeOption[Constants.option.escapeCmdUniversal.platforms];
-        const currentPlatforms = platforms.length > 0 ? platforms : [PLATFORM.AUTO];
-
-        escapedCmd = escapeCmdUniversal(urlString, currentPlatforms);
-    } else {
-        escapedCmd = urlString
-    }
-    console.debug('escapedCmd', escapedCmd);
-
-    command = command.replace("%u", escapedCmd);
-
-    console.debug('command', command);
-
-    console.debug('tabId', tabId);
-    console.debug('frameId', frameId);
-
-    browser.tabs.sendMessage(
-        tabId,
-        {
-            type: Constants.messageType.copyDownloadCommand,
-            payload: {command}
-        },
-        {frameId}
-    );
-
-    return {cancel: true};
-};
-browser.webRequest.onBeforeSendHeaders.addListener(async ({url, requestHeaders, method}) => {
-        try {
-            return await handleProbRequestFn({url, requestHeaders, method});
-        } catch (e) {
-            console.debug('error', e);
+        console.log('current contextMenus.onClicked is', {
+            menuItemId,
+            linkUrl,
+            frameId,
+            srcUrl,
+            mediaType
+        }, {id: tabId});
+        if (mediaType === undefined) { // treat undefined as a link
+            mediaType = 'link';
+        }
+        if (["image", "video", "audio"].includes(mediaType)) {
+            linkUrl = srcUrl;
+        }
+        console.log('send', Constants.messageType.execProbRequest);
+        console.log('send linkUrl', linkUrl);
+        browser.tabs.sendMessage(
+            tabId,
+            {
+                type: Constants.messageType.execProbRequest,
+                payload: {linkUrl, frameId, tabId, mediaType}
+            },
+            {frameId}
+        );
+    });
+    const handleProbRequestFn = async ({url, requestHeaders, method}) => {
+        if (method !== 'GET') {
             return {};
         }
-    },
-    {
-        urls: ["<all_urls>"]
-    },
-    ["blocking", "requestHeaders"]
-);
-browser.runtime.onMessage.addListener(async ({type, payload: {command}}) => {
-    if (type !== Constants.messageType.copyDownloadCommandInBackground) {
-        return;
-    }
-    console.debug('copy command in background', {type, payload: {command}});
-    await navigator.clipboard.writeText(command);
-    console.debug('command was copied in background', {type, payload: {command}});
-});
+        url = new URL(url);
+
+        const {searchParams} = url;
+        const config = await option.get();
+        console.log('handleProbRequestFn config', config);
+        const urlParameterName = config[Constants.option.extensionUuid];
+
+        if (!searchParams.has(urlParameterName)) {
+            return {};
+        }
+        console.log('{url, requestHeaders, method}', {url, requestHeaders, method});
+        console.log('urlParameterName', urlParameterName);
+
+        const tabIdUrlParameterName = Constants.option.tabIdUrlParameterName(urlParameterName);
+        const frameIdUrlParameterName = Constants.option.frameIdUrlParameterName(urlParameterName);
+        const tabId = Number(searchParams.get(tabIdUrlParameterName));
+        const frameId = Number(searchParams.get(frameIdUrlParameterName));
+
+        searchParams.delete(urlParameterName);
+        searchParams.delete(tabIdUrlParameterName);
+        searchParams.delete(frameIdUrlParameterName);
+
+        const urlString = url.toString();
+        const domainUrl = await getUrlByTabIdAndFrameIdFn(tabId, frameId);
+        console.log('domainUrl', domainUrl);
+        const urlOption = config[Constants.option.options].find(({urlPattern, urlPatternFlags}) =>
+            new RegExp(urlPattern, urlPatternFlags).test(domainUrl));
+
+        if (urlOption === undefined) {
+            return {cancel: true};
+        }
+
+        console.log('config', config)
+        console.log('urlOption', urlOption)
+
+        let command = urlOption[Constants.option.commandTemplate];
+
+        if (Boolean(urlOption[Constants.option.useHeaders])) {
+            if (Boolean(urlOption[Constants.option.useDisallowedHeaders])) {
+                const disallowedHeaders = urlOption[Constants.option.disallowedHeaders] || [];
+                console.log('disallowedHeaders', disallowedHeaders);
+                requestHeaders = requestHeaders.filter(({name}) => !disallowedHeaders.includes(name));
+            }
+            if (Boolean(urlOption[Constants.option.useAllowedHeaders])) {
+                const allowedHeaders = urlOption[Constants.option.allowedHeaders] || [];
+                console.log('AllowedHeaders', allowedHeaders);
+                requestHeaders = requestHeaders.filter(({name}) => allowedHeaders.includes(name));
+            }
+
+            const headerParameterName = urlOption[Constants.option.headerParameterName];
+            const headers = requestHeaders
+                .map(({
+                          name,
+                          value
+                      }) => `${headerParameterName}="${name}: ${value}"`)
+                .join(" ");
+
+            command = command.replace("%h", headers);
+        } else {
+            command = command.replace("%h", '');
+        }
+
+        const escapeOption = urlOption[Constants.option.escapeCmdUniversal.escapeCmdUniversal];
+        let escapedCmd;
+
+        if (escapeOption !== undefined && Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabled])) {
+            const platforms = escapeOption[Constants.option.escapeCmdUniversal.platforms];
+            const currentPlatforms = platforms.length > 0 ? platforms : [PLATFORM.AUTO];
+
+            escapedCmd = escapeCmdUniversal(urlString, currentPlatforms);
+        } else {
+            escapedCmd = urlString
+        }
+        console.log('escapedCmd', escapedCmd);
+
+        command = command.replace("%u", escapedCmd);
+
+        console.log('command', command);
+
+        console.log('tabId', tabId);
+        console.log('frameId', frameId);
+
+        browser.tabs.sendMessage(
+            tabId,
+            {
+                type: Constants.messageType.copyDownloadCommand,
+                payload: {command}
+            },
+            {frameId}
+        );
+
+        return {cancel: true};
+    };
+
+    console.log('browser.webRequest.onBeforeSendHeaders.addListener will be started');
+    browser.webRequest.onBeforeSendHeaders.addListener(async ({url, requestHeaders, method}) => {
+            try {
+                return await handleProbRequestFn({url, requestHeaders, method});
+            } catch (e) {
+                console.log('error', e);
+                return {};
+            }
+        },
+        {
+            urls: ["<all_urls>"]
+        },
+        ["blocking", "requestHeaders"]
+    );
+
+    console.log('browser.runtime.onMessage.addListener will be started');
+    browser.runtime.onMessage.addListener(async ({type, payload: {command}}) => {
+        if (type !== Constants.messageType.copyDownloadCommandInBackground) {
+            return;
+        }
+        console.log('copy command in background', {type, payload: {command}});
+        await navigator.clipboard.writeText(command);
+        console.log('command was copied in background', {type, payload: {command}});
+    });
+})();
