@@ -35,16 +35,3 @@ browser.runtime.onMessage.addListener(async ({type, payload: {linkUrl, tabId, fr
     console.log('send prob', url);
     sendGetVia(mediaType, url.toString());
 });
-browser.runtime.onMessage.addListener(({type, payload: {command}}) => {
-    if (type !== Constants.messageType.copyDownloadCommand) {
-        return;
-    }
-    console.log('command', command);
-    try {
-        navigator.clipboard.writeText(command);
-    } catch (e) {
-        console.warn('Somewhat writeText does not work in content script', e);
-        console.log('command will be sent to background to copy', command)
-        browser.runtime.sendMessage({type: Constants.messageType.copyDownloadCommandInBackground, payload: {command}});
-    }
-});

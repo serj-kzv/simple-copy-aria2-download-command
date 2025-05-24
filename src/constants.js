@@ -22,9 +22,7 @@ const Constants = Object.freeze({
         },
     }),
     messageType: {
-        execProbRequest: 'exec-prob-request',
-        copyDownloadCommand: 'copy-download-command',
-        copyDownloadCommandInBackground: 'copy-download-command-in-background',
+        execProbRequest: 'exec-prob-request'
     },
     element: Object.freeze({
         contextMenuId: "simple-copy-aria2-download-command",
