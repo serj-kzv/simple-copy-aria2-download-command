@@ -43,10 +43,18 @@ console.log('option was created');
     });
 
     console.log('browser.contextMenus.onClicked.addListener will be started');
-    browser.contextMenus.onClicked.addListener(({menuItemId, linkUrl, frameId, srcUrl, mediaType}, {
-        id: tabId,
-        url: tabUrl
-    }) => {
+    browser.contextMenus.onClicked.addListener((details, tab) => {
+        console.log('browser.contextMenus.onClicked.addListener details', details);
+        const {menuItemId, frameId, srcUrl} = details;
+        let {linkUrl, mediaType} = details;
+        console.log('browser.contextMenus.onClicked.addListener tab', tab);
+        if (!linkUrl && !srcUrl) {
+            console.warn('Invalid element url (there are no linkUrl and srcUrl), ' +
+                'probably the element uses a blob: url or some another invalid url. It will not be proceeded.', details);
+            return;
+        }
+
+        const {id: tabId, url: tabUrl} = tab;
         if (menuItemId !== Constants.element.contextMenuId) {
             return;
         }
