@@ -158,11 +158,11 @@ console.log('option was created');
 
                     escapedCmd = escapeCmdUniversal(urlString, currentPlatforms, encodeUrlMode);
                 } else {
-                    escapedCmd = urlString
+                    escapedCmd = urlString;
                 }
                 console.log('escapedCmd', escapedCmd);
 
-                command = command.replace("%u", escapedCmd);
+                command = command.replace("%u", `"${escapedCmd}"`);
 
                 console.log('command', command);
 
