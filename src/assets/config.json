@@ -18,7 +18,8 @@
         "enabled": true,
         "platforms": [
           "AUTO"
-        ]
+        ],
+        "encodeUrlMode": "RFC5987"
       },
       "allowedHeaders": [
         "User-Agent"

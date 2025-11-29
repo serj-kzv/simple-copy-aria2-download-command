@@ -154,8 +154,9 @@ console.log('option was created');
                 if (escapeOption !== undefined && Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabled])) {
                     const platforms = escapeOption[Constants.option.escapeCmdUniversal.platforms];
                     const currentPlatforms = platforms.length > 0 ? platforms : [PLATFORM.AUTO];
+                    const encodeUrlMode = escapeOption[Constants.option.escapeCmdUniversal.encodeUrlMode];
 
-                    escapedCmd = escapeCmdUniversal(urlString, currentPlatforms);
+                    escapedCmd = escapeCmdUniversal(urlString, currentPlatforms, encodeUrlMode);
                 } else {
                     escapedCmd = urlString
                 }
