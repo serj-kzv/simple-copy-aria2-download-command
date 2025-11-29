@@ -36,6 +36,17 @@ const encodeRFC5987ValueChars = str => {
             )
     );
 };
+const escapeUrl = (href, escape = str => str) => {
+    const {origin, pathname, search, hash} = new URL(href);
+    const escapedPathname = pathname.split('/').map(segment => escape(segment)).join('/');
+    const escapedSearchParams = [...new URLSearchParams(search)]
+        .map(([k, v]) => `${escape(k)}=${escape(v)}`)
+        .join('&');
+    const escapedSearch = search ? `?${escapedSearchParams}` : '';
+    const escapedHash = hash ? `#${escape(hash.slice(1))}` : '';
+
+    return `${origin}${escapedPathname}${escapedSearch}${escapedHash}`;
+};
 const escapeCmdUniversal = (str, platforms = [PLATFORM.AUTO], encodeUrlMode) => {
     if (platforms.length < 1 || platforms.includes(PLATFORM.OFF)) {
         console.log('escapeCmdUniversal is off');
@@ -46,15 +57,15 @@ const escapeCmdUniversal = (str, platforms = [PLATFORM.AUTO], encodeUrlMode) => 
     switch (encodeUrlMode) {
         case ENCODE_URL_MODE.RFC3986: {
             console.log('escapeCmdUniversal with encodeUrlMode', encodeUrlMode);
-            return encodeRFC3986URIComponent(str);
+            return escapeUrl(str, encodeRFC3986URIComponent);
         }
         case ENCODE_URL_MODE.RFC5987: {
             console.log('escapeCmdUniversal with encodeUrlMode', encodeUrlMode);
-            return encodeRFC5987ValueChars(str);
+            return escapeUrl(str, encodeRFC5987ValueChars);
         }
         default: {
             console.log('escapeCmdUniversal with default encodeUrlMode', encodeUrlMode);
-            return encodeRFC5987ValueChars(str);
+            return escapeUrl(str, encodeRFC3986URIComponent);
         }
     }
 };
