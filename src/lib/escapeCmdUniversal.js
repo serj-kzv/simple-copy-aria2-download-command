@@ -65,7 +65,7 @@ const escapeCmdUniversal = (str, platforms = [PLATFORM.AUTO], encodeUrlMode) => 
         }
         default: {
             console.log('escapeCmdUniversal with default encodeUrlMode', encodeUrlMode);
-            return escapeUrl(str, encodeRFC3986URIComponent);
+            return escapeUrl(str, encodeRFC5987ValueChars);
         }
     }
 };

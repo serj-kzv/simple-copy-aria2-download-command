@@ -3,7 +3,8 @@
     "migration1Fn": true,
     "migration2Fn": true,
     "migration3Fn": true,
-    "migration4Fn": true
+    "migration4Fn": true,
+    "migration5Fn": true
   },
   "firstStart": true,
   "extensionUuid": "9458080f-40fc-4357-b000-81133ef06365",
