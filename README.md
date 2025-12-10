@@ -1,3 +1,7 @@
+## Addon installation
+
+[![Install on Firefox](https://img.shields.io/badge/Firefox_Add_Ons-Install-20123A?logo=firefoxbrowser&logoColor=white&style=for-the-badge)](https://addons.mozilla.org/firefox/addon/simple-copy-aria2-download-cmd)
+
 ## Description
 
 A lightweight browser extension that adds a convenient context menu item for copying a GET request link as an `aria2` command. With one click, you can copy a ready-to-use `aria2` command for efficient, multi-connection downloads.
