@@ -4,7 +4,8 @@
     "migration2Fn": true,
     "migration3Fn": true,
     "migration4Fn": true,
-    "migration5Fn": true
+    "migration5Fn": true,
+    "migration6Fn": true
   },
   "firstStart": true,
   "extensionUuid": "9458080f-40fc-4357-b000-81133ef06365",
@@ -20,7 +21,7 @@
         "platforms": [
           "AUTO"
         ],
-        "encodeUrlMode": "RFC5987"
+        "encodeUrlMode": "ENCODE_URI"
       },
       "allowedHeaders": [
         "User-Agent"

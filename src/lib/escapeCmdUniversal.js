@@ -5,6 +5,8 @@ const PLATFORM = Object.freeze({
     LINUX: 'LINUX'
 });
 const ENCODE_URL_MODE = Object.freeze({
+    ENCODE_URI: 'ENCODE_URI',
+    ENCODE_URI_COMPONENT: 'ENCODE_URI_COMPONENT',
     RFC3986: 'RFC3986',
     RFC5987: 'RFC5987'
 });
@@ -55,6 +57,14 @@ const escapeCmdUniversal = (str, platforms = [PLATFORM.AUTO], encodeUrlMode) => 
     console.log('escapeCmdUniversal is on for:', platforms);
 
     switch (encodeUrlMode) {
+        case ENCODE_URL_MODE.ENCODE_URI: {
+            console.log('escapeCmdUniversal with encodeUrlMode', encodeUrlMode);
+            return encodeURI(str);
+        }
+        case ENCODE_URL_MODE.ENCODE_URI_COMPONENT: {
+            console.log('escapeCmdUniversal with encodeUrlMode', encodeUrlMode);
+            return escapeUrl(str, encodeURIComponent);
+        }
         case ENCODE_URL_MODE.RFC3986: {
             console.log('escapeCmdUniversal with encodeUrlMode', encodeUrlMode);
             return escapeUrl(str, encodeRFC3986URIComponent);
@@ -65,7 +75,7 @@ const escapeCmdUniversal = (str, platforms = [PLATFORM.AUTO], encodeUrlMode) => 
         }
         default: {
             console.log('escapeCmdUniversal with default encodeUrlMode', encodeUrlMode);
-            return escapeUrl(str, encodeRFC5987ValueChars);
+            return encodeURI(str);
         }
     }
 };
