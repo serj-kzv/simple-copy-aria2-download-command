@@ -5,7 +5,8 @@
     "migration3Fn": true,
     "migration4Fn": true,
     "migration5Fn": true,
-    "migration6Fn": true
+    "migration6Fn": true,
+    "migration7Fn": true
   },
   "firstStart": true,
   "extensionUuid": "9458080f-40fc-4357-b000-81133ef06365",
@@ -30,7 +31,8 @@
       "name": "common",
       "useDisallowedHeaders": true,
       "disallowedHeaders": [
-        "Range"
+        "Range",
+        "Host"
       ]
     }
   ]
