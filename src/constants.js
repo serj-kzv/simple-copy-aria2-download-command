@@ -18,8 +18,15 @@ const Constants = Object.freeze({
         escapeCmdUniversal: {
             escapeCmdUniversal: 'escapeCmdUniversal',
             enabled: 'enabled',
+            /**
+             * @deprecated since version 1.0.16
+             */
             platforms: 'platforms',
-            encodeUrlMode: 'encodeUrlMode'
+            /**
+             * @deprecated since version 1.0.16
+             */
+            encodeUrlMode: 'encodeUrlMode',
+            urlQuotes: 'urlQuotes',
         },
     }),
     messageType: {

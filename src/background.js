@@ -1,7 +1,7 @@
 import Option from "./lib/Option.js";
 import Constants from "./constants.js";
 import getUrlByTabIdAndFrameIdFn from "./lib/getUrlByTabIdAndFrameId.js";
-import {escapeCmdUniversal, PLATFORM} from "./lib/escapeCmdUniversal.js";
+import addQuotes from "./lib/addQuotes.js";
 import executeOnPageClosedCallback from "./lib/executeOnPageClosedFn.js";
 import migrateFn from "./changelog/migrateFn.js";
 
@@ -149,20 +149,19 @@ console.log('option was created');
                 }
 
                 const escapeOption = urlOption[Constants.option.escapeCmdUniversal.escapeCmdUniversal];
-                let escapedCmd;
+                let escapedUrl;
 
                 if (escapeOption !== undefined && Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabled])) {
-                    const platforms = escapeOption[Constants.option.escapeCmdUniversal.platforms];
-                    const currentPlatforms = platforms.length > 0 ? platforms : [PLATFORM.AUTO];
-                    const encodeUrlMode = escapeOption[Constants.option.escapeCmdUniversal.encodeUrlMode];
+                    const urlQuotes = escapeOption[Constants.option.escapeCmdUniversal.urlQuotes];
 
-                    escapedCmd = escapeCmdUniversal(urlString, currentPlatforms, encodeUrlMode);
+                    escapedUrl = encodeURI(urlString);
+                    escapedUrl = addQuotes(escapedUrl, urlQuotes);
                 } else {
-                    escapedCmd = urlString;
+                    escapedUrl = urlString;
                 }
-                console.log('escapedCmd', escapedCmd);
+                console.log('escapedCmd', escapedUrl);
 
-                command = command.replace("%u", `"${escapedCmd}"`);
+                command = command.replace("%u", escapedUrl);
 
                 console.log('command', command);
 
