@@ -7,7 +7,8 @@
     "migration5Fn": true,
     "migration6Fn": true,
     "migration7Fn": true,
-    "migration8Fn": true
+    "migration8Fn": true,
+    "migration9Fn": true
   },
   "firstStart": true,
   "extensionUuid": "9458080f-40fc-4357-b000-81133ef06365",
@@ -20,7 +21,8 @@
       "useAllowedHeaders": false,
       "escapeCmdUniversal": {
         "enabled": true,
-        "urlQuotes": "DOUBLE"
+        "urlQuotes": "DOUBLE",
+        "headerQuotes": "DOUBLE"
       },
       "allowedHeaders": [
         "User-Agent"

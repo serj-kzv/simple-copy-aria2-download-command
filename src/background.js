@@ -122,6 +122,8 @@ console.log('option was created');
                 console.log('urlOption', urlOption)
 
                 let command = urlOption[Constants.option.commandTemplate];
+                const escapeOption = urlOption[Constants.option.escapeCmdUniversal.escapeCmdUniversal];
+                const escapeOptionIsEnabled = escapeOption !== undefined && Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabled]);
 
                 if (Boolean(urlOption[Constants.option.useHeaders])) {
                     if (Boolean(urlOption[Constants.option.useDisallowedHeaders])) {
@@ -140,26 +142,25 @@ console.log('option was created');
                         .map(({
                                   name,
                                   value
-                              }) => `${headerParameterName}="${name}: ${value}"`)
-                        .join(" ");
+                              }) => {
+                            const headerValue = `${name}: ${value}`;
+                            const escapedHeaderValue = escapeOptionIsEnabled
+                                ? addQuotes(headerValue, escapeOption[Constants.option.escapeCmdUniversal.headerQuotes])
+                                : headerValue;
+
+                            return `${headerParameterName}=${escapedHeaderValue}`;
+                        })
+                        .join(' ');
 
                     command = command.replace("%h", headers);
                 } else {
                     command = command.replace("%h", '');
                 }
 
-                const escapeOption = urlOption[Constants.option.escapeCmdUniversal.escapeCmdUniversal];
-                let escapedUrl;
-
-                if (escapeOption !== undefined && Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabled])) {
-                    const urlQuotes = escapeOption[Constants.option.escapeCmdUniversal.urlQuotes];
-
-                    escapedUrl = encodeURI(urlString);
-                    escapedUrl = addQuotes(escapedUrl, urlQuotes);
-                } else {
-                    escapedUrl = urlString;
-                }
-                console.log('escapedCmd', escapedUrl);
+                const escapedUrl = escapeOptionIsEnabled
+                    ? addQuotes(encodeURI(urlString), escapeOption[Constants.option.escapeCmdUniversal.urlQuotes])
+                    : urlString;
+                console.log('escapedUrl', escapedUrl);
 
                 command = command.replace("%u", escapedUrl);
 

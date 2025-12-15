@@ -27,6 +27,7 @@ const Constants = Object.freeze({
              */
             encodeUrlMode: 'encodeUrlMode',
             urlQuotes: 'urlQuotes',
+            headerQuotes: 'headerQuotes'
         },
     }),
     messageType: {
