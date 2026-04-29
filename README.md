@@ -61,7 +61,7 @@ npx web-ext run
   npm run pack
   ```
 
-  The output file will be located in the `dist/` directory.
+  The output file will be located in the `build/` directory.
 
 ## Usage
 
