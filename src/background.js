@@ -128,6 +128,8 @@ console.log('option was created');
                 const escapeOptionIsEnabled = escapeOptionIsDefined
                     && (Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabled])
                         || Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabledUrlEscaping]));
+                const enabledUrlQuotesIsEnabled = escapeOptionIsDefined
+                    && Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabledUrlQuotes]);
 
                 if (Boolean(urlOption[Constants.option.useHeaders])) {
                     if (Boolean(urlOption[Constants.option.useDisallowedHeaders])) {
@@ -148,7 +150,7 @@ console.log('option was created');
                                   value
                               }) => {
                             const headerValue = `${name}: ${value}`;
-                            const escapedHeaderValue = escapeOptionIsEnabled
+                            const escapedHeaderValue = enabledUrlQuotesIsEnabled
                                 ? addQuotes(headerValue, escapeOption[Constants.option.escapeCmdUniversal.headerQuotes])
                                 : headerValue;
 
@@ -166,8 +168,6 @@ console.log('option was created');
                     : urlString;
                 console.log('escapedUrl', escapedUrl);
 
-                const enabledUrlQuotesIsEnabled = escapeOptionIsDefined
-                    && Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabledUrlQuotes]);
                 const quotedUrl = enabledUrlQuotesIsEnabled
                     ? addQuotes(escapedUrl, escapeOption[Constants.option.escapeCmdUniversal.urlQuotes])
                     : escapedUrl;
