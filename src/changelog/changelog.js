@@ -7,6 +7,7 @@ import migration6Fn from "../changelog/migration6Fn.js";
 import migration7Fn from "../changelog/migration7Fn.js";
 import migration8Fn from "../changelog/migration8Fn.js";
 import migration9Fn from "../changelog/migration9Fn.js";
+import migration10Fn from "../changelog/migration10Fn.js";
 
 const changelog = [
     {name: 'migration1Fn', migrationFn: migration1Fn},
@@ -17,7 +18,8 @@ const changelog = [
     {name: 'migration6Fn', migrationFn: migration6Fn},
     {name: 'migration7Fn', migrationFn: migration7Fn},
     {name: 'migration8Fn', migrationFn: migration8Fn},
-    {name: 'migration9Fn', migrationFn: migration9Fn}
+    {name: 'migration9Fn', migrationFn: migration9Fn},
+    {name: 'migration10Fn', migrationFn: migration10Fn}
 ];
 
 export default changelog;

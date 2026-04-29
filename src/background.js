@@ -4,6 +4,7 @@ import getUrlByTabIdAndFrameIdFn from "./lib/getUrlByTabIdAndFrameId.js";
 import addQuotes from "./lib/addQuotes.js";
 import executeOnPageClosedCallback from "./lib/executeOnPageClosedFn.js";
 import migrateFn from "./changelog/migrateFn.js";
+import isEncodedWithEncodeURI from "./lib/isEncodedWithEncodeURI.js";
 
 console.log('start background script');
 
@@ -123,7 +124,10 @@ console.log('option was created');
 
                 let command = urlOption[Constants.option.commandTemplate];
                 const escapeOption = urlOption[Constants.option.escapeCmdUniversal.escapeCmdUniversal];
-                const escapeOptionIsEnabled = escapeOption !== undefined && Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabled]);
+                const escapeOptionIsDefined = escapeOption !== undefined;
+                const escapeOptionIsEnabled = escapeOptionIsDefined
+                    && (Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabled])
+                        || Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabledUrlEscaping]));
 
                 if (Boolean(urlOption[Constants.option.useHeaders])) {
                     if (Boolean(urlOption[Constants.option.useDisallowedHeaders])) {
@@ -157,12 +161,19 @@ console.log('option was created');
                     command = command.replace("%h", '');
                 }
 
-                const escapedUrl = escapeOptionIsEnabled
-                    ? addQuotes(encodeURI(urlString), escapeOption[Constants.option.escapeCmdUniversal.urlQuotes])
+                const escapedUrl = escapeOptionIsEnabled && !isEncodedWithEncodeURI(urlString)
+                    ? encodeURI(urlString)
                     : urlString;
                 console.log('escapedUrl', escapedUrl);
 
-                command = command.replace("%u", escapedUrl);
+                const enabledUrlQuotesIsEnabled = escapeOptionIsDefined
+                    && Boolean(escapeOption[Constants.option.escapeCmdUniversal.enabledUrlQuotes]);
+                const quotedUrl = enabledUrlQuotesIsEnabled
+                    ? addQuotes(escapedUrl, escapeOption[Constants.option.escapeCmdUniversal.urlQuotes])
+                    : escapedUrl;
+                console.log('quotedUrl', quotedUrl);
+
+                command = command.replace("%u", quotedUrl);
 
                 console.log('command', command);
 

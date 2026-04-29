@@ -1,6 +1,6 @@
 {
   "name": "simple-copy-aria2-download-command",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "You can copy a link with a GET request type as a command for the aria2 utility to download a resource via the link.",
   "type": "module",
   "repository": {
@@ -14,14 +14,14 @@
   },
   "homepage": "https://github.com/serj-kzv/simple-copy-aria2-download-command#readme",
   "devDependencies": {
-    "@babel/core": "^7.22.9",
-    "@babel/preset-env": "^7.22.9",
-    "babel-loader": "^9.1.2",
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.2",
+    "babel-loader": "^9.2.1",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
-    "terser-webpack-plugin": "^5.3.9",
-    "web-ext": "^8.6.0",
-    "webpack": "^5.88.1",
+    "terser-webpack-plugin": "^5.5.0",
+    "web-ext": "^8.10.0",
+    "webpack": "^5.106.2",
     "webpack-cli": "^5.1.4"
   },
   "scripts": {

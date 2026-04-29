@@ -17,7 +17,12 @@ const Constants = Object.freeze({
         commandTemplate: 'commandTemplate',
         escapeCmdUniversal: {
             escapeCmdUniversal: 'escapeCmdUniversal',
+            /**
+             * @deprecated since version 1.0.18
+             */
             enabled: 'enabled',
+            enabledUrlEscaping: 'enabledUrlEscaping',
+            enabledUrlQuotes: 'enabledUrlQuotes',
             /**
              * @deprecated since version 1.0.16
              */

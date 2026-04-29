@@ -20,7 +20,8 @@
       "headerParameterName": "--header",
       "useAllowedHeaders": false,
       "escapeCmdUniversal": {
-        "enabled": true,
+        "enabledUrlEscaping": true,
+        "enabledUrlQuotes": true,
         "urlQuotes": "DOUBLE",
         "headerQuotes": "DOUBLE"
       },
